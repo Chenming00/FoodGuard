@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { 
   Activity, 
@@ -26,7 +26,8 @@ interface FoodResult {
   alternatives: string[];
 }
 
-export default function ResultPage() {
+// Suspense Wrapper for useSearchParams
+function ResultContent() {
   const searchParams = useSearchParams();
   const foodName = searchParams.get('food') || '';
   
@@ -254,3 +255,21 @@ export default function ResultPage() {
     </div>
   );
 }
+
+// Suspense Wrapper
+function ResultPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+        <div className="text-center">
+          <RefreshCw className="h-12 w-12 text-emerald-600 animate-spin mx-auto mb-4" />
+          <p className="text-emerald-800 font-medium">正在加载...</p>
+        </div>
+      </div>
+    }>
+      <ResultContent />
+    </Suspense>
+  );
+}
+
+export default ResultPage;

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // 食物分析 API - 直接返回识别结果，不再查询数据库
+// Mark as dynamic to allow using request.url
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
