@@ -1,121 +1,279 @@
-import Link from 'next/link';
-import { Activity, ChefHat, Box, AlertCircle } from 'lucide-react';
+'use client';
+
+import { useState } from 'react';
+import { ChefHat, Loader2, Plus, X } from 'lucide-react';
+
+interface Recipe {
+  name: string;
+  ingredients_used: string[];
+  missing_ingredients: string[];
+  steps: string[];
+}
 
 export default function HomePage() {
+  const [ingredientsInput, setIngredientsInput] = useState('');
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // 解析食材输入（支持中英文逗号）
+  const parseIngredients = (input: string): string[] => {
+    return input
+      .split(/[,，]/)
+      .map(item => item.trim())
+      .filter(item => item.length > 0);
+  };
+
+  // 生成菜单
+  const handleGenerate = async () => {
+    const ingredients = parseIngredients(ingredientsInput);
+    
+    if (ingredients.length === 0) {
+      setError('请输入至少一个食材');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setRecipes([]);
+
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ingredients })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || '生成失败，请重试');
+      }
+
+      if (Array.isArray(data.recipes)) {
+        setRecipes(data.recipes);
+      } else {
+        throw new Error('返回格式错误');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '生成失败，请重试');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 移除食材
+  const removeIngredient = (index: number) => {
+    const ingredients = parseIngredients(ingredientsInput);
+    ingredients.splice(index, 1);
+    setIngredientsInput(ingredients.join(', '));
+  };
+
+  // 显示已输入的食材标签
+  const renderIngredientTags = () => {
+    const ingredients = parseIngredients(ingredientsInput);
+    return ingredients.map((ingredient, index) => (
+      <span
+        key={index}
+        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-sm font-medium"
+      >
+        {ingredient}
+        <button
+          onClick={() => removeIngredient(index)}
+          className="hover:text-emerald-600"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </span>
+    ));
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-100">
       {/* 导航栏 */}
-      <nav className="border-b border-green-200 bg-white/80 backdrop-blur-sm">
+      <nav className="border-b border-emerald-200 bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Activity className="h-8 w-8 text-emerald-600" />
-              <span className="text-xl font-bold text-emerald-900">冰箱食物保卫者</span>
-            </div>
-            <div className="hidden md:flex gap-6 text-sm font-medium text-emerald-800">
-              <Link href="/" className="hover:text-emerald-600 transition-colors">
-                首页
-              </Link>
-              <Link href="/ingredients" className="hover:text-emerald-600 transition-colors">
-                食材管理
-              </Link>
-              <Link href="/menu" className="hover:text-emerald-600 transition-colors">
-                今日菜单
-              </Link>
-            </div>
+          <div className="flex items-center gap-2">
+            <ChefHat className="h-8 w-8 text-emerald-600" />
+            <span className="text-xl font-bold text-emerald-900">FridgeChef AI</span>
           </div>
         </div>
       </nav>
 
       {/* 主要内容 */}
-      <main className="container mx-auto px-4 py-16">
-        <div className="flex flex-col items-center justify-center text-center">
-          <div className="mb-8 animate-fade-in-up">
-            <h1 className="mb-4 text-4xl md:text-6xl font-bold text-emerald-900">
-              冰箱食物保卫者
+      <main className="container mx-auto px-4 py-12">
+        <div className="max-w-3xl mx-auto">
+          {/* 标题 */}
+          <div className="text-center mb-10">
+            <h1 className="text-4xl md:text-5xl font-bold text-emerald-900 mb-4">
+              冰箱里的智能厨师
             </h1>
-            <p className="text-lg md:text-xl text-emerald-700 max-w-2xl">
-              管理您的冰箱食材，AI 智能生成健康菜单，让每一口都营养均衡
+            <p className="text-lg text-emerald-700">
+              输入你有的食材，AI 为你生成美味菜谱
             </p>
           </div>
 
-          {/* 功能卡片 */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 max-w-5xl w-full">
-            <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
-              <div className="h-12 w-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
-                <Box className="h-6 w-6 text-blue-600" />
+          {/* 输入区域 */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              输入你的食材（用逗号分隔）
+            </label>
+            
+            <textarea
+              value={ingredientsInput}
+              onChange={(e) => setIngredientsInput(e.target.value)}
+              placeholder="例如：鸡蛋, 西红柿, 豆腐, 青椒"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 min-h-[100px] resize-y"
+            />
+            
+            {/* 已输入的食材标签 */}
+            {parseIngredients(ingredientsInput).length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {renderIngredientTags()}
               </div>
-              <h3 className="text-lg font-semibold mb-2">食材管理</h3>
-              <p className="text-sm text-gray-600">添加和管理您的冰箱食材，实时监控保质期</p>
-            </div>
+            )}
 
-            <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
-              <div className="h-12 w-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
-                <ChefHat className="h-6 w-6 text-orange-600" />
+            {/* 错误提示 */}
+            {error && (
+              <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
+                <X className="h-5 w-5 text-red-600" />
+                <p className="text-red-700">{error}</p>
+                <button
+                  onClick={() => setError(null)}
+                  className="ml-auto text-red-600 hover:text-red-800"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-              <h3 className="text-lg font-semibold mb-2">智能菜单</h3>
-              <p className="text-sm text-gray-600">基于现有食材，AI 生成健康营养的每日菜单</p>
-            </div>
+            )}
 
-            <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
-              <div className="h-12 w-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
-                <Activity className="h-6 w-6 text-green-600" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">健康分析</h3>
-              <p className="text-sm text-gray-600">分析每道菜的嘌呤和升糖指数，吃得更健康</p>
-            </div>
+            {/* 生成按钮 */}
+            <button
+              onClick={handleGenerate}
+              disabled={loading || parseIngredients(ingredientsInput).length === 0}
+              className={`w-full mt-6 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 ${
+                loading || parseIngredients(ingredientsInput).length === 0
+                  ? 'bg-emerald-400 cursor-not-allowed'
+                  : 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/30'
+              } text-white`}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                  正在生成菜单...
+                </>
+              ) : (
+                <>
+                  <ChefHat className="h-6 w-6" />
+                  生成菜单
+                </>
+              )}
+            </button>
           </div>
 
-          {/* 快速入口 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-3xl w-full">
-            <Link
-              href="/ingredients"
-              className="group block bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-105 text-center"
-            >
-              <div className="h-16 w-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-200 transition-colors">
-                <Box className="h-8 w-8 text-emerald-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-emerald-900">开始管理食材</h3>
-              <p className="text-gray-600">添加您的冰箱食材，开始智能菜单生成</p>
-            </Link>
+          {/* 结果展示 */}
+          {recipes.length > 0 && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-emerald-900">
+                为您推荐 {recipes.length} 道菜
+              </h2>
+              
+              {recipes.map((recipe, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-2xl shadow-lg overflow-hidden"
+                >
+                  {/* 菜名 */}
+                  <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-6 text-white">
+                    <h3 className="text-2xl font-bold">{recipe.name}</h3>
+                  </div>
 
-            <Link
-              href="/menu"
-              className="group block bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-105 text-center"
-            >
-              <div className="h-16 w-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors">
-                <ChefHat className="h-8 w-8 text-orange-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-emerald-900">查看今日菜单</h3>
-              <p className="text-gray-600">基于食材生成的健康营养菜单</p>
-            </Link>
-          </div>
+                  {/* 菜单内容 */}
+                  <div className="p-6">
+                    {/* 使用的食材 */}
+                    <div className="mb-4">
+                      <h4 className="font-semibold text-emerald-700 mb-2 flex items-center gap-2">
+                        <div className="h-5 w-5 bg-green-100 rounded-full flex items-center justify-center">
+                          <span className="text-green-700 text-xs">✓</span>
+                        </div>
+                        使用的食材
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {recipe.ingredients_used.map((ing, i) => (
+                          <span
+                            key={i}
+                            className="inline-flex items-center px-3 py-1 rounded-full bg-green-50 border border-green-200 text-sm font-medium text-green-800"
+                          >
+                            {ing}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
 
-          {/* 健康提示 */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 max-w-3xl w-full">
-            <h2 className="text-2xl font-bold mb-6 text-emerald-900">健康小贴士</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold text-emerald-700 mb-2">嘌呤知识</h3>
-                <p className="text-sm text-gray-600">
-                  嘌呤是人体代谢产物，高嘌呤食物可能导致尿酸升高，痛风患者需注意控制摄入。
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-emerald-700 mb-2">升糖指数（GI）</h3>
-                <p className="text-sm text-gray-600">
-                  GI 值高的食物会快速升高血糖，糖尿病患者应选择低 GI 食物，保持血糖稳定。
-                </p>
-              </div>
+                    {/* 缺少的食材 */}
+                    {recipe.missing_ingredients.length > 0 && (
+                      <div className="mb-4">
+                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-2">
+                          <div className="h-5 w-5 bg-red-100 rounded-full flex items-center justify-center">
+                            <span className="text-red-700 text-xs">!</span>
+                          </div>
+                          缺少的食材
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {recipe.missing_ingredients.map((ing, i) => (
+                            <span
+                              key={i}
+                              className="inline-flex items-center px-3 py-1 rounded-full bg-red-50 border border-red-200 text-sm font-medium text-red-800"
+                            >
+                              {ing}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 制作步骤 */}
+                    <div>
+                      <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                        <div className="h-5 w-5 bg-orange-100 rounded-full flex items-center justify-center">
+                          <span className="text-orange-700 text-xs">📝</span>
+                        </div>
+                        制作步骤
+                      </h4>
+                      <ol className="space-y-2">
+                        {recipe.steps.map((step, i) => (
+                          <li key={i} className="flex items-start gap-3 text-gray-700">
+                            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center text-sm font-bold">
+                              {i + 1}
+                            </span>
+                            <span className="flex-1">{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
+          )}
+
+          {/* 提示 */}
+          <div className="mt-12 bg-emerald-50 rounded-2xl p-6 text-center">
+            <h3 className="font-semibold text-emerald-900 mb-2">使用提示</h3>
+            <p className="text-sm text-emerald-700">
+              输入您冰箱里现有的食材，AI 将为您推荐最适合的菜谱。支持中英文逗号分隔，例如：
+              <code className="bg-emerald-100 px-2 py-1 rounded mx-1">鸡蛋, 西红柿</code>
+              或
+              <code className="bg-emerald-100 px-2 py-1 rounded mx-1">egg, tomato</code>
+            </p>
           </div>
         </div>
       </main>
 
       {/* 页脚 */}
-      <footer className="border-t border-green-200 bg-white py-8 mt-12">
+      <footer className="border-t border-emerald-200 bg-white py-8 mt-12">
         <div className="container mx-auto px-4 text-center text-emerald-800">
-          <p className="text-sm">© 2026 冰箱食物保卫者 - 让每一口都营养健康</p>
+          <p className="text-sm">© 2026 FridgeChef AI - 您的智能厨房助手</p>
         </div>
       </footer>
     </div>

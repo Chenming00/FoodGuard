@@ -1,72 +1,62 @@
-# 冰箱食物保卫者 - 智能菜单生成系统
+# FridgeChef AI - 冰箱里的智能厨师
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-14.2.21-black?style=flat&logo=next.js" alt="Next.js">
   <img src="https://img.shields.io/badge/React-18.3.1-blue?style=flat&logo=react" alt="React">
   <img src="https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript" alt="TypeScript">
-  <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License">
+  <img src="https://img.shields.io/badge/Deploy-Vercel-blue?style=flat" alt="Deploy">
 </p>
 
 <p align="center">
   <a href="#功能特性">功能特性</a> • 
   <a href="#技术栈">技术栈</a> • 
   <a href="#快速开始">快速开始</a> • 
-  <a href="#项目结构">项目结构</a> • 
-  <a href="#API接口">API接口</a> • 
   <a href="#部署">部署</a>
 </p>
 
 ## 📖 项目简介
 
-冰箱食物保卫者是一个基于人工智能技术的智能菜单生成系统，旨在帮助用户充分利用冰箱中的剩余食材，生成健康营养的每日菜单。通过管理您的冰箱食材，系统可以智能推荐使用这些食材的菜谱，并提供详细的营养分析。
+FridgeChef AI 是一个基于人工智能技术的智能菜单生成系统，用户只需输入冰箱里的食材，AI 就会为您推荐适合的菜谱，并标出缺少的食材。
 
 ### 核心功能
 
-- 📦 **食材管理** - 添加和管理您的冰箱食材，实时监控保质期
-- 🍳 **智能菜单生成** - 基于现有食材，AI 智能生成健康菜单
-- 📊 **营养分析** - 分析每道菜的热量、蛋白质、碳水、脂肪
-- ⚠️ **健康指标** - 提供嘌呤和升糖指数（GI）分析
-- 📱 **响应式设计** - 完美适配桌面端和移动端
+- 🍳 **智能菜单生成** - 输入食材，AI 生成 3-5 道菜
+- 📋 **食材清单** - 标出使用的食材和缺少的食材
+- 📝 **详细步骤** - 每道菜提供 3-5 步简单做法
+- 🏠 **家庭制作** - 适合家庭制作的菜谱推荐
+- 🎨 **现代 UI** - 响应式设计，完美适配桌面端和移动端
 
 ## 🎯 功能特性
 
-### 1. 食材管理
-- 手动添加食材（名称、数量、单位、保质期）
-- 食材分类管理（蔬菜、水果、肉类、海鲜、蛋奶、豆制品、主食、调料）
-- 食材保质期监控
-- 过期预警提醒
+### 1. 智能菜单生成
+- 输入食材（支持中英文逗号分隔）
+- AI 自动推荐 3-5 道菜
+- 标出使用的食材（绿色）
+- 标出缺少的食材（红色）
 
-### 2. 智能菜单生成
-- 基于现有食材自动生成菜单
-- 包含早餐、午餐、晚餐
-- 智能匹配可用菜谱
-- 剩余食材建议
+### 2. 详细菜谱信息
+- 菜名
+- 使用的食材列表
+- 缺少的食材列表
+- 制作步骤（带序号）
 
-### 3. 营养分析
-- 热量（kcal）
-- 蛋白质（g）
-- 碳水化合物（g）
-- 脂肪（g）
-- 嘌呤等级（低/中/高）
-- 升糖指数（低/中/高）
-
-### 4. 菜谱数据库
-- 内置 15+ 种常见家常菜
-- 每道菜包含详细制作步骤
-- 支持食材替换建议
+### 3. 用户体验
+- Loading 状态提示
+- 错误处理和提示
+- 响应式设计
 
 ## 🛠️ 技术栈
 
 ### 前端技术
-- **Next.js 14.2.21** - React 框架，支持服务端渲染和静态生成
+- **Next.js 14.2.21** - React 框架，支持服务端渲染
 - **React 18.3.1** - 前端 UI 框架
-- **TypeScript 5.0** - 类型安全的 JavaScript 超集
-- **Tailwind CSS 4** - 原子化 CSS 框架
-- **Lucide React** - 现代化的图标库
+- **TypeScript** - 类型安全
+- **Tailwind CSS** - 原子化 CSS 框架
+- **Lucide React** - 图标库
 
 ### 后端技术
 - **Next.js API Routes** - 服务端 API 路由
-- **内存存储** - 本地数据管理（可扩展为数据库）
+- **OpenAI API** - AI 模型调用（qwen3.5-plus）
 
 ## 🚀 快速开始
 
@@ -74,6 +64,7 @@
 
 - Node.js 18+ 版本
 - npm、yarn、pnpm 或 bun 包管理器
+- OpenAI API Key（可选，不填使用模拟数据）
 
 ### 安装步骤
 
@@ -94,7 +85,15 @@
    bun install
    ```
 
-3. **启动开发服务器**
+3. **配置环境变量** (`.env.local`)
+   ```bash
+   # OpenAI API 配置（可选）
+   OPENAI_API_KEY=your_api_key
+   OPENAI_BASE_URL=https://api.openai.com/v1
+   MODEL_NAME=qwen3.5-plus
+   ```
+
+4. **启动开发服务器**
    ```bash
    npm run dev
    # 或
@@ -105,226 +104,89 @@
    bun dev
    ```
 
-4. **访问应用**
+5. **访问应用**
    
    打开浏览器，访问 [http://localhost:3000](http://localhost:3000)
 
 ## 📁 项目结构
 
 ```
-FoodGuard/
-├── app/                      # Next.js App Router 目录
-│   ├── api/                  # API 路由
-│   │   ├── ingredients/      # 食材管理 API
-│   │   │   └── list/route.ts
-│   │   └── menu/             # 菜单生成 API
-│   │       └── generate/route.ts
-│   ├── ingredients/          # 食材管理页面
-│   │   └── page.tsx
-│   ├── menu/                 # 菜单页面
-│   │   └── page.tsx
-│   ├── layout.tsx            # 全局布局
-│   ├── page.tsx              # 首页
-│   └── globals.css           # 全局样式
-├── lib/                      # 库文件
-│   ├── types.ts              # TypeScript 类型定义
-│   └── menuDatabase.ts       # 菜谱数据库
-├── public/                   # 静态资源
-│   ├── file.svg
-│   ├── globe.svg
-│   ├── next.svg
-│   ├── vercel.svg
-│   └── window.svg
-├── .env.local                # 环境变量配置（可选）
-├── .gitignore                # Git 忽略配置
-├── next.config.mjs           # Next.js 配置
-├── package.json              # 项目依赖
-├── tsconfig.json             # TypeScript 配置
-└── README.md                 # 项目说明文档
+FridgeChef AI/
+├── app/
+│   ├── api/
+│   │   └── generate/
+│   │       └── route.ts          # API 路由
+│   ├── page.tsx                   # 首页
+│   ├── layout.tsx                 # 布局
+│   └── globals.css                # 样式
+├── .env.local                     # 环境变量
+├── .gitignore                     # Git 忽略配置
+├── next.config.mjs                # Next.js 配置
+├── package.json                   # 项目依赖
+├── tsconfig.json                  # TypeScript 配置
+└── README.md                      # 项目说明文档
 ```
 
 ## 🔌 API 接口
 
-### 1. 食材管理 API (`/api/ingredients/list`)
+### 生成菜单 API (`/api/generate`)
 
-#### 获取所有食材
-**请求方式**: `GET`
+#### 请求方式
+`POST /api/generate`
 
-**响应示例**:
+#### 请求参数
+```json
+{
+  "ingredients": ["鸡蛋", "西红柿", "豆腐"]
+}
+```
+
+#### 响应示例
 ```json
 {
   "success": true,
-  "data": [
+  "recipes": [
     {
-      "id": "1",
-      "name": "西红柿",
-      "quantity": 3,
-      "unit": "个",
-      "expiryDate": "2026-04-15",
-      "category": "蔬菜",
-      "createdAt": "2026-04-07T10:00:00.000Z"
+      "name": "西红柿炒鸡蛋",
+      "ingredients_used": ["鸡蛋", "西红柿", "葱"],
+      "missing_ingredients": ["油", "盐"],
+      "steps": [
+        "鸡蛋打散，西红柿切块，葱切末",
+        "热锅倒油，倒入蛋液炒至凝固盛出",
+        "锅中留油，爆香葱末，加入西红柿翻炒至软烂",
+        "加入炒好的鸡蛋，调盐，翻炒均匀即可"
+      ]
     }
   ]
 }
 ```
 
-#### 添加食材
-**请求方式**: `POST`
+## 🎨 使用示例
 
-**请求参数**:
-```json
-{
-  "name": "西红柿",
-  "quantity": 3,
-  "unit": "个",
-  "expiryDate": "2026-04-15",
-  "category": "蔬菜",
-  "notes": "新鲜"
-}
+### 输入示例
+```
+鸡蛋, 西红柿, 豆腐, 青椒
 ```
 
-#### 删除食材
-**请求方式**: `DELETE`
-
-**请求参数**:
-```json
-{
-  "id": "1"
-}
+### 输出示例
 ```
+1. 西红柿炒鸡蛋
+   - 使用：鸡蛋, 西红柿, 葱
+   - 缺少：油, 盐
+   - 步骤：
+     1. 鸡蛋打散，西红柿切块，葱切末
+     2. 热锅倒油，倒入蛋液炒至凝固盛出
+     3. 锅中留油，爆香葱末，加入西红柿翻炒至软烂
+     4. 加入炒好的鸡蛋，调盐，翻炒均匀即可
 
-### 2. 菜单生成 API (`/api/menu/generate`)
-
-#### 生成菜单
-**请求方式**: `POST`
-
-**请求参数**:
-```json
-{
-  "ingredients": ["西红柿", "鸡蛋", "西兰花", "豆腐"]
-}
-```
-
-**响应示例**:
-```json
-{
-  "success": true,
-  "data": {
-    "id": "1",
-    "date": "2026-04-07",
-    "meals": [
-      {
-        "type": "breakfast",
-        "name": "西红柿炒鸡蛋",
-        "ingredients": ["西红柿", "鸡蛋", "葱", "盐", "油"],
-        "nutrition": {
-          "calories": 220,
-          "protein": 12,
-          "carbs": 10,
-          "fat": 15,
-          "purine": "低",
-          "gi": "低"
-        },
-        "instructions": "制作步骤..."
-      }
-    ],
-    "ingredientsUsed": ["西红柿", "鸡蛋", "葱"],
-    "suggestions": {
-      "remainingIngredients": ["西兰花", "豆腐"],
-      "recipesCount": 5
-    }
-  }
-}
-```
-
-## 📊 菜谱数据库
-
-项目内置了 15+ 种常见家常菜，涵盖以下类别：
-
-| 食物类别 | 代表菜谱 |
-|---------|---------|
-| 家常菜 | 西红柿炒鸡蛋、清炒西兰花、青椒炒肉丝 |
-| 汤类 | 番茄豆腐汤、蒸鸡蛋羹、紫菜蛋花汤 |
-| 凉菜 | 凉拌黄瓜 |
-| 主菜 | 土豆炖牛肉 |
-| 海鲜 | 蒜蓉粉丝蒸扇贝 |
-| 沙拉 | 鸡肉蔬菜沙拉 |
-
-## 🎨 页面说明
-
-### 首页 (`/`)
-- 项目介绍和功能展示
-- 功能卡片介绍（食材管理、智能菜单、健康分析）
-- 快速入口到食材管理和菜单页面
-- 健康小贴士（嘌呤知识、升糖指数介绍）
-
-### 食材管理页面 (`/ingredients`)
-- 添加食材（名称、数量、单位、保质期、分类）
-- 食材列表展示
-- 食材过期提醒
-- 统计数据（总数、新鲜、即将过期）
-
-### 菜单页面 (`/menu`)
-- 生成今日菜单
-- 菜单概览（营养统计）
-- 菜餐详情（食材、营养、制作步骤）
-- 剩余食材建议
-
-## 📊 健康指标说明
-
-### 嘌呤（Purine）
-
-嘌呤是人体代谢的产物，高嘌呤食物可能导致尿酸升高，引发痛风。
-
-| 嘌呤等级 | 含量范围 | 适用人群 | 食用建议 |
-|---------|---------|---------|---------|
-| 低 | < 50mg/100g | 所有人 | 可自由食用 |
-| 中 | 50-150mg/100g | 痛风患者 | 建议适量食用 |
-| 高 | > 150mg/100g | 痛风患者 | 应避免食用 |
-
-### 升糖指数（GI）
-
-升糖指数表示食物引起血糖上升的速度。
-
-| GI 等级 | 范围 | 适用人群 | 食用建议 |
-|---------|------|---------|---------|
-| 低 | < 55 | 糖尿病患者 | 可自由食用 |
-| 中 | 55-70 | 所有人 | 建议适量食用 |
-| 高 | > 70 | 糖尿病患者 | 应避免食用 |
-
-## 🛠️ 开发说明
-
-### 添加新菜谱
-在 `lib/menuDatabase.ts` 文件中添加新的菜谱对象：
-
-```typescript
-{
-  id: '16',
-  name: '新菜谱名称',
-  category: '家常菜',
-  ingredients: [
-    { name: '食材1', quantity: '数量' },
-    { name: '食材2', quantity: '数量' }
-  ],
-  instructions: '制作步骤',
-  nutrition: {
-    calories: 0,
-    protein: 0,
-    carbs: 0,
-    fat: 0,
-    purine: '低',
-    gi: '低'
-  },
-  prepTime: 30,
-  servings: 2
-}
-```
-
-### 添加新食材分类
-在 `app/ingredients/page.tsx` 文件中添加新的分类：
-
-```typescript
-{ value: '新分类', label: '新分类', color: 'bg-xxx-100 text-xxx-800' },
+2. 番茄豆腐汤
+   - 使用：西红柿, 豆腐, 葱
+   - 缺少：盐, 香油
+   - 步骤：
+     1. 西红柿切块，豆腐切块，葱切末
+     2. 锅中加少许油，爆香葱末，加入西红柿翻炒出汁
+     3. 加入适量清水，煮开后加入豆腐块
+     4. 煮2分钟，调盐和香油即可
 ```
 
 ## 🚢 部署
@@ -334,7 +196,11 @@ FoodGuard/
 1. 将项目推送到 GitHub 仓库
 2. 访问 [Vercel](https://vercel.com)
 3. 导入你的 GitHub 仓库
-4. 点击部署
+4. 添加环境变量：
+   - `OPENAI_API_KEY` - OpenAI API 密钥
+   - `OPENAI_BASE_URL` - API 地址（可选）
+   - `MODEL_NAME` - 模型名称（可选，默认 qwen3.5-plus）
+5. 点击部署
 
 ### 本地构建和部署
 
@@ -346,6 +212,16 @@ npm run build
 npm start
 ```
 
+## 📝 环境变量
+
+| 变量名 | 说明 | 是否必需 | 默认值 |
+|--------|------|----------|--------|
+| `OPENAI_API_KEY` | OpenAI API 密钥 | 否 | - |
+| `OPENAI_BASE_URL` | API 地址 | 否 | https://api.openai.com/v1 |
+| `MODEL_NAME` | 模型名称 | 否 | qwen3.5-plus |
+
+> **注意**：如果不配置 `OPENAI_API_KEY`，系统将使用模拟数据运行。
+
 ## 🤝 贡献指南
 
 欢迎提交 Issue 和 Pull Request！
@@ -356,15 +232,6 @@ npm start
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 开启 Pull Request
 
-## 📝 开发日志
-
-### v0.1.0 (2026-04-07)
-- ✅ 实现基本的食材管理功能
-- ✅ 实现智能菜单生成
-- ✅ 内置 15+ 种常见菜谱
-- ✅ 添加营养分析功能
-- ✅ 完成响应式 UI 设计
-
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
@@ -374,6 +241,7 @@ npm start
 - [Next.js](https://nextjs.org/) - 优秀的 React 框架
 - [Tailwind CSS](https://tailwindcss.com/) - 原子化 CSS 框架
 - [Lucide Icons](https://lucide.dev/) - 精美的图标库
+- [OpenAI](https://openai.com/) - AI 模型
 
 ## 📧 联系方式
 

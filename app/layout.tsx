@@ -13,8 +13,8 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "冰箱食物保卫者 - 智能菜单生成",
-  description: "管理冰箱食材，AI 智能生成健康菜单，让每一口都营养均衡",
+  title: "FridgeChef AI - 冰箱里的智能厨师",
+  description: "输入你有的食材，AI 为你生成美味菜谱",
 };
 
 export default function RootLayout({
