@@ -103,15 +103,8 @@ export default function ScanPage() {
     setResult(null);
 
     try {
-      // 将图片转换为 Base64，并添加 MIME 类型前缀
-      const response = await fetch(previewImage);
-      const blob = await response.blob();
-      const buffer = await blob.arrayBuffer();
-      const base64 = btoa(
-        new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
-      );
-      // 添加 MIME 类型前缀，例如: data:image/png;base64,
-      const base64WithPrefix = `data:${selectedImage.type};base64,${base64}`;
+      // 直接使用 FileReader 生成的 previewImage (已经是含完整前缀的 Base64)
+      const base64WithPrefix = previewImage;
 
       // 这里调用识别 API
       const apiResponse = await fetch('/api/recognize', {

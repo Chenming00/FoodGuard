@@ -48,16 +48,7 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `你是一个食物识别和健康分析专家。请分析上传的图片，识别出食物的名称，并分析其健康指标。
-
-请返回以下信息：
-1. foodName: 食物名称（中文）
-2. 嘌呤: 嘌呤含量等级（低/中/高）
-3. gi: 升糖指数（低/中/高）
-4. risk: 健康风险提示（简短描述）
-5. alternatives: 推荐的替代食物（3-5个）
-
-返回格式：{"foodName": "xxx", "嘌呤": "低/中/高", "gi": "低/中/高", "risk": "xxx", "alternatives": ["xxx", "xxx", "xxx"]}`
+            content: '你是一个食物营养专家。请分析图片并直接输出合法的JSON格式结果，不包含任何Markdown格式或多余的文字。'
           },
           {
             role: 'user',
@@ -67,12 +58,16 @@ export async function POST(request: NextRequest) {
                 image_url: {
                   url: imageBase64
                 }
+              },
+              {
+                type: 'text',
+                text: `请识别图片中的食物，并分析其健康指标。你需要返回以下JSON格式：\n{\n  "foodName": "食物名称（中文）",\n  "嘌呤": "低/中/高",\n  "gi": "低/中/高",\n  "risk": "健康风险提示（简短描述）",\n  "alternatives": ["替代食物1", "替代食物2", "替代食物3"]\n}`
               }
             ]
           }
         ],
-        temperature: 0.3,
-        max_tokens: 500
+        temperature: 0.1, // 调低温度以获得更稳定的JSON格式
+        max_tokens: 800
       })
     });
 
@@ -115,8 +110,9 @@ export async function POST(request: NextRequest) {
     };
     
     try {
-      // 清理可能的 Markdown 格式
-      const cleanContent = content.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+      // 提取JSON字符串：使用正则匹配 {} 块以防模型额外输出废话
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      const cleanContent = jsonMatch ? jsonMatch[0] : content.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
       const parsed = JSON.parse(cleanContent);
       result = {
         foodName: parsed.foodName || '未知食物',
