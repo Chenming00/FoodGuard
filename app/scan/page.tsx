@@ -353,7 +353,7 @@ export default function ScanPage() {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg, image/png, image/webp"
               onChange={handleImageSelect}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
