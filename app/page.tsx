@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Upload, Activity, AlertCircle } from 'lucide-react';
+import { Activity, ChefHat, Box, AlertCircle } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -10,14 +10,17 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Activity className="h-8 w-8 text-emerald-600" />
-              <span className="text-xl font-bold text-emerald-900">Food Health Scanner</span>
+              <span className="text-xl font-bold text-emerald-900">冰箱食物保卫者</span>
             </div>
             <div className="hidden md:flex gap-6 text-sm font-medium text-emerald-800">
               <Link href="/" className="hover:text-emerald-600 transition-colors">
                 首页
               </Link>
-              <Link href="/scan" className="hover:text-emerald-600 transition-colors">
-                扫描食物
+              <Link href="/ingredients" className="hover:text-emerald-600 transition-colors">
+                食材管理
+              </Link>
+              <Link href="/menu" className="hover:text-emerald-600 transition-colors">
+                今日菜单
               </Link>
             </div>
           </div>
@@ -29,10 +32,10 @@ export default function HomePage() {
         <div className="flex flex-col items-center justify-center text-center">
           <div className="mb-8 animate-fade-in-up">
             <h1 className="mb-4 text-4xl md:text-6xl font-bold text-emerald-900">
-              智能食物健康扫描
+              冰箱食物保卫者
             </h1>
             <p className="text-lg md:text-xl text-emerald-700 max-w-2xl">
-              上传食物图片，AI 自动识别食物并分析嘌呤和升糖指数，为您提供健康风险提示和替代建议
+              管理您的冰箱食材，AI 智能生成健康菜单，让每一口都营养均衡
             </p>
           </div>
 
@@ -40,37 +43,51 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 max-w-5xl w-full">
             <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
               <div className="h-12 w-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
-                <Upload className="h-6 w-6 text-blue-600" />
+                <Box className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">智能识别</h3>
-              <p className="text-sm text-gray-600">AI 技术精准识别食物种类</p>
+              <h3 className="text-lg font-semibold mb-2">食材管理</h3>
+              <p className="text-sm text-gray-600">添加和管理您的冰箱食材，实时监控保质期</p>
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
               <div className="h-12 w-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
-                <Activity className="h-6 w-6 text-orange-600" />
+                <ChefHat className="h-6 w-6 text-orange-600" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">健康分析</h3>
-              <p className="text-sm text-gray-600">分析嘌呤和升糖指数指标</p>
+              <h3 className="text-lg font-semibold mb-2">智能菜单</h3>
+              <p className="text-sm text-gray-600">基于现有食材，AI 生成健康营养的每日菜单</p>
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
               <div className="h-12 w-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
-                <AlertCircle className="h-6 w-6 text-green-600" />
+                <Activity className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">健康建议</h3>
-              <p className="text-sm text-gray-600">提供风险提示和替代食物</p>
+              <h3 className="text-lg font-semibold mb-2">健康分析</h3>
+              <p className="text-sm text-gray-600">分析每道菜的嘌呤和升糖指数，吃得更健康</p>
             </div>
           </div>
 
-          {/* 上传按钮 */}
-          <div className="mb-12">
+          {/* 快速入口 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-3xl w-full">
             <Link
-              href="/scan"
-              className="inline-flex items-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all hover:scale-105 shadow-lg hover:shadow-emerald-500/30"
+              href="/ingredients"
+              className="group block bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-105 text-center"
             >
-              <Upload className="h-6 w-6" />
-              开始扫描食物
+              <div className="h-16 w-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-200 transition-colors">
+                <Box className="h-8 w-8 text-emerald-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-emerald-900">开始管理食材</h3>
+              <p className="text-gray-600">添加您的冰箱食材，开始智能菜单生成</p>
+            </Link>
+
+            <Link
+              href="/menu"
+              className="group block bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-105 text-center"
+            >
+              <div className="h-16 w-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors">
+                <ChefHat className="h-8 w-8 text-orange-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-emerald-900">查看今日菜单</h3>
+              <p className="text-gray-600">基于食材生成的健康营养菜单</p>
             </Link>
           </div>
 
@@ -98,7 +115,7 @@ export default function HomePage() {
       {/* 页脚 */}
       <footer className="border-t border-green-200 bg-white py-8 mt-12">
         <div className="container mx-auto px-4 text-center text-emerald-800">
-          <p className="text-sm">© 2026 Food Health Scanner. 为您的健康保驾护航</p>
+          <p className="text-sm">© 2026 冰箱食物保卫者 - 让每一口都营养健康</p>
         </div>
       </footer>
     </div>

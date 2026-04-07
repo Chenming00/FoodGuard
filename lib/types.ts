@@ -1,45 +1,78 @@
-// 食物健康数据类型定义
-
-export type PurineLevel = '低' | '中' | '高';
-export type GILevel = '低' | '中' | '高';
-
-export interface FoodItem {
+// 食材类型定义
+export interface Ingredient {
   id: string;
   name: string;
- 嘌呤: PurineLevel;
-  gi: GILevel;
-  risk?: string;
-  alternatives: string[];
+  quantity: number;
+  unit: string;
+  expiryDate: string;
+  category: string;
+  notes?: string;
   createdAt: string;
 }
 
-export interface FoodAnalysisResult {
-  foodName: string;
- 嘌呤: PurineLevel;
- 嘌呤Description: string;
-  gi: GILevel;
-  giDescription: string;
-  risk?: string;
-  alternatives: string[];
+// 营养信息
+export interface NutritionInfo {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  purine: '低' | '中' | '高';
+  gi: '低' | '中' | '高';
 }
 
-export interface RecognizeResponse {
-  foodName: string;
-  confidence: number;
+// 菜餐类型
+export interface Meal {
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  name: string;
+  ingredients: string[];
+  nutrition: NutritionInfo;
+  instructions?: string;
 }
 
-export interface RecommendResponse {
-  alternatives: string[];
-  suggestions: string;
+// 菜单类型
+export interface Menu {
+  id: string;
+  date: string;
+  meals: Meal[];
+  ingredientsUsed: string[];
+  suggestions?: {
+    remainingIngredients: string[];
+    recipesCount: number;
+  };
+  createdAt: string;
 }
 
-// 上传图片请求
-export interface UploadRequest {
-  imageBase64: string;
+// 菜谱类型
+export interface Recipe {
+  id: string;
+  name: string;
+  category: string;
+  ingredients: { name: string; quantity: string }[];
+  instructions: string;
+  nutrition: NutritionInfo;
+  prepTime: number; // 分钟
+  servings: number;
 }
 
-// 上传图片响应
-export interface UploadResponse {
+// API 响应类型
+export interface ApiResponse<T> {
   success: boolean;
-  message?: string;
+  data?: T;
+  error?: string;
+}
+
+// 食材添加请求
+export interface AddIngredientRequest {
+  name: string;
+  quantity: number;
+  unit: string;
+  expiryDate: string;
+  category: string;
+  notes?: string;
+}
+
+// 菜单生成请求
+export interface GenerateMenuRequest {
+  ingredients: string[];
+  dietaryRestrictions?: string[];
 }

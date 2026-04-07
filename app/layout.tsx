@@ -13,8 +13,8 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Food Health Scanner",
-  description: "智能食物健康扫描 - AI 自动识别食物并分析嘌呤和升糖指数",
+  title: "冰箱食物保卫者 - 智能菜单生成",
+  description: "管理冰箱食材，AI 智能生成健康菜单，让每一口都营养均衡",
 };
 
 export default function RootLayout({
